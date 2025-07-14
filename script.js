@@ -30,6 +30,7 @@ const createToDo = (text = "", checked = false) => {
 
   // Append the items to the element
   ToDoList.appendChild(ToDo);
+  sortToDos();
   ToDo.appendChild(ToDoCheckbox);
   ToDoCheckbox.appendChild(ToDoCheckboxCircle);
   ToDoCheckbox.appendChild(Checkbox);
@@ -39,14 +40,21 @@ const createToDo = (text = "", checked = false) => {
   DeleteBtn.appendChild(DeleteIcon);
 
   ToDoTextEdit.value = text;
-  ToDoText.style.display = "none";
-  ToDoTextEdit.focus();
+
+  if (text === "") {
+    ToDoText.style.display = "none";
+    ToDoTextEdit.style.display = "block";
+    ToDoTextEdit.focus();
+  } else {
+    ToDoTextEdit.style.display = "none";
+    ToDoText.style.display = "block";
+  }
 
   // When we click in the To-Do
   ToDoText.addEventListener("click", () => {
     ToDoText.style.display = "none";
     ToDoTextEdit.style.display = "block";
-    ToDoTextEdit.focus();
+    ToDoTextEdit.select();
     saveToDos();
   });
 
@@ -76,6 +84,7 @@ const createToDo = (text = "", checked = false) => {
   ToDoCheckbox.addEventListener("click", () => {
     // Add or remove the following class
     ToDo.classList.toggle("checked");
+    sortToDos();
     saveToDos();
   });
 
@@ -104,6 +113,21 @@ const loadToDos = () => {
   todos.forEach((todo) => {
     createToDo(todo.text, todo.checked);
   });
+};
+
+//Filters the cards that are Done
+const sortToDos = () => {
+  //Put the To Dos in an array
+  const todos = Array.from(ToDoList.children);
+  // check if the cards have the checked class or not
+  todos
+    .sort((a, b) => {
+      const aChecked = a.classList.contains("checked");
+      const bChecked = b.classList.contains("checked");
+      // put the unchecked cards before the checked ones
+      return aChecked - bChecked;
+    })
+    .forEach((todo) => ToDoList.appendChild(todo));
 };
 
 // When we click on the + button
