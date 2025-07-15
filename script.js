@@ -1,7 +1,9 @@
 // @ts-nocheck
 const ToDoAddBtn = document.querySelector(".to-do-add");
 const ToDoList = document.querySelector(".to-do-list");
-const key = "todos";
+const backgroundSelector = document.querySelector(".bg-selector");
+const toDoKey = "todos";
+const backgroundKey = "backgroundImg";
 
 const createToDo = (text = "", checked = false) => {
   // Create these elements
@@ -84,7 +86,9 @@ const createToDo = (text = "", checked = false) => {
   ToDoCheckbox.addEventListener("click", () => {
     // Add or remove the following class
     ToDo.classList.toggle("checked");
+
     sortToDos();
+
     saveToDos();
   });
 
@@ -120,19 +124,41 @@ const sortToDos = () => {
   //Put the To Dos in an array
   const todos = Array.from(ToDoList.children);
   // check if the cards have the checked class or not
-  todos
-    .sort((a, b) => {
-      const aChecked = a.classList.contains("checked");
-      const bChecked = b.classList.contains("checked");
-      // put the unchecked cards before the checked ones
-      return aChecked - bChecked;
-    })
-    .forEach((todo) => ToDoList.appendChild(todo));
+  setTimeout(() => {
+    todos
+      .sort((a, b) => {
+        const aChecked = a.classList.contains("checked");
+        const bChecked = b.classList.contains("checked");
+        // put the unchecked cards before the checked ones
+        return aChecked - bChecked;
+      })
+      .forEach((todo) => {
+        ToDoList.appendChild(todo);
+      });
+  }, 100);
 };
 
 // When we click on the + button
 ToDoAddBtn.addEventListener("click", () => {
   createToDo();
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+  console.log("page chargée");
+  const savedBackground = localStorage.getItem("backgroundImg");
+
+  if (savedBackground) {
+    document.body.style.backgroundImage = `url(${savedBackground})`;
+  }
+});
+
+// When we want to change background image
+backgroundSelector.addEventListener("click", (e) => {
+  if (e.target.classList.contains("bg-img")) {
+    const backgroundImg = e.target.src;
+    document.body.style.backgroundImage = `url(${backgroundImg})`;
+    localStorage.setItem("backgroundImg", backgroundImg);
+  }
 });
 
 loadToDos();
