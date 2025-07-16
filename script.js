@@ -52,10 +52,13 @@ const createToDo = (text = "", checked = false) => {
     ToDoText.style.display = "block";
   }
 
+  ToDoTextEdit.focus();
+
   // When we click in the To-Do
   ToDoText.addEventListener("click", () => {
     ToDoText.style.display = "none";
     ToDoTextEdit.style.display = "block";
+    ToDo.style.scale = "1.05";
     ToDoTextEdit.select();
     saveToDos();
   });
@@ -79,6 +82,8 @@ const createToDo = (text = "", checked = false) => {
   ToDoTextEdit.addEventListener("blur", () => {
     ToDoTextEdit.style.display = "none";
     ToDoText.style.display = "block";
+    ToDo.style.scale = "1";
+
     ToDoText.focus();
   });
 
@@ -124,18 +129,16 @@ const sortToDos = () => {
   //Put the To Dos in an array
   const todos = Array.from(ToDoList.children);
   // check if the cards have the checked class or not
-  setTimeout(() => {
-    todos
-      .sort((a, b) => {
-        const aChecked = a.classList.contains("checked");
-        const bChecked = b.classList.contains("checked");
-        // put the unchecked cards before the checked ones
-        return aChecked - bChecked;
-      })
-      .forEach((todo) => {
-        ToDoList.appendChild(todo);
-      });
-  }, 100);
+  todos
+    .sort((a, b) => {
+      const aChecked = a.classList.contains("checked");
+      const bChecked = b.classList.contains("checked");
+      // put the unchecked cards before the checked ones
+      return aChecked - bChecked;
+    })
+    .forEach((todo) => {
+      ToDoList.appendChild(todo);
+    });
 };
 
 // When we click on the + button
@@ -144,11 +147,19 @@ ToDoAddBtn.addEventListener("click", () => {
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-  console.log("page chargée");
   const savedBackground = localStorage.getItem("backgroundImg");
 
   if (savedBackground) {
     document.body.style.backgroundImage = `url(${savedBackground})`;
+
+    document.querySelectorAll(".bg-btn").forEach((btn) => {
+      const img = btn.querySelector(".bg-img");
+      if (img && img.src === savedBackground) {
+        btn.classList.remove("not-selected");
+      } else {
+        btn.classList.add("not-selected");
+      }
+    });
   }
 });
 
@@ -156,8 +167,18 @@ window.addEventListener("DOMContentLoaded", () => {
 backgroundSelector.addEventListener("click", (e) => {
   if (e.target.classList.contains("bg-img")) {
     const backgroundImg = e.target.src;
+    const clickedBtn = e.target.closest(".bg-btn");
+
     document.body.style.backgroundImage = `url(${backgroundImg})`;
     localStorage.setItem("backgroundImg", backgroundImg);
+
+    document.querySelectorAll(".bg-btn").forEach((btn) => {
+      if (btn === clickedBtn) {
+        btn.classList.remove("not-selected");
+      } else {
+        btn.classList.add("not-selected");
+      }
+    });
   }
 });
 
